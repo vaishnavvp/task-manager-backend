@@ -2,12 +2,23 @@
   "name": "task-manager-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "author": {
+    "name": "Vaishnav Eyyanath",
+    "email": "vaishnav.vp96@gmail.com",
+    "url": "https://github.com/vaishnavvp"
+  },
+   "contributors": [
+    {
+      "name": "Vaishnav Eyyanath",
+      "email": "vaishnav.vp96@gmail.com",
+      "url": "https://github.com/vaishnavvp"
+    }
+  ],
   "scripts": {
   "dev": "nodemon server.js",
   "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {

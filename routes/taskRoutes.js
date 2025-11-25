@@ -11,10 +11,11 @@ router.get("/", protect, async (req, res) => {
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const filter = {}; // or { createdBy: req.user._id } if per-user
+    const filter = {};
 
     const [tasks, total] = await Promise.all([
       Task.find(filter)
+        .populate("createdBy", "_id")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
@@ -64,6 +65,7 @@ router.put("/:id", protect, async (req, res) => {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ message: "Task not found" });
 
+    // Only creator OR admin can edit
     if (
       task.createdBy.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
@@ -99,4 +101,4 @@ router.delete("/:id", protect, adminOnly, async (req, res) => {
   }
 });
 
-module.exports = router;   // 👈 VERY IMPORTANT
+module.exports = router;
