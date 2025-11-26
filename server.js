@@ -4,25 +4,29 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 
+// Load env vars
 dotenv.config();
+
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// -------------------------------
-// ✅ CORS FIX FOR LOCAL + VERCEL + RENDER
-// -------------------------------
+// -----------------------------
+// CORS CONFIG
+// -----------------------------
 const allowedOrigins = [
   "http://localhost:5173", // Vite dev
   "http://localhost:3000", // CRA dev (optional)
-  "https://task-manager-frontend-amber-kappa.vercel.app", // Your Vercel frontend
-  "https://task-manager-backend-qy4i.onrender.com", // Backend's own domain
+  "https://task-manager-frontend-amber-kappa.vercel.app", // Vercel frontend
+  "https://task-manager-backend-qy4i.onrender.com", // Render backend URL
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // Postman / server-to-server
+      // Allow tools like Postman / server-to-server (no Origin header)
+      if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
@@ -37,17 +41,14 @@ app.use(
   })
 );
 
-// Allow OPTIONS for all routes
-app.options("*", cors());
-
-// -------------------------------
-// Body Parser
-// -------------------------------
+// -----------------------------
+// BODY PARSER
+// -----------------------------
 app.use(express.json());
 
-// -------------------------------
-// Routes
-// -------------------------------
+// -----------------------------
+// ROUTES
+// -----------------------------
 app.get("/", (req, res) => {
   res.send("Task Manager API is running");
 });
@@ -55,11 +56,31 @@ app.get("/", (req, res) => {
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/tasks", require("./routes/taskRoutes"));
 
-// -------------------------------
-// Server Start
-// -------------------------------
+// -----------------------------
+// ERROR HANDLER (incl. CORS errors)
+// -----------------------------
+app.use((err, req, res, next) => {
+  // CORS error
+  if (err instanceof Error && err.message === "Not allowed by CORS") {
+    return res.status(403).json({ message: "CORS error: origin not allowed" });
+  }
+
+  console.error("Unhandled error:", err);
+  res.status(500).json({ message: "Server error" });
+});
+
+// -----------------------------
+// 404 FALLBACK (no '*' route)
+// -----------------------------
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// -----------------------------
+// START SERVER
+// -----------------------------
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
