@@ -11,7 +11,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",                       // Vite dev
   "https://task-manager-backend-qy4i.onrender.com", // (optional, backend own origin)
-  "https://YOUR-FRONTEND-NAME.vercel.app",      // <-- when you deploy frontend
+  "https://task-manager-frontend-amber-kappa.vercel.app",      // <-- when you deploy frontend
 ];
 
 app.use(
