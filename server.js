@@ -10,7 +10,14 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",                   // local Vite
+      "https://your-frontend-name.vercel.app",   // we'll put exact domain after deploy
+    ],
+  })
+);
 app.use(express.json());
 
 // Routes
